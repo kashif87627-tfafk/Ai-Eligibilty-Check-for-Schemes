@@ -1,0 +1,307 @@
+.document-upload {
+  background: white;
+  border-radius: 8px;
+  padding: 24px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.document-upload h3 {
+  margin: 0 0 20px 0;
+  font-size: 20px;
+  color: #1f2937;
+}
+
+.missing-documents-alert {
+  background: #fef3c7;
+  border: 1px solid #f59e0b;
+  border-radius: 6px;
+  padding: 16px;
+  margin-bottom: 24px;
+}
+
+.missing-documents-alert h4 {
+  margin: 0 0 12px 0;
+  font-size: 16px;
+  color: #92400e;
+  font-weight: 600;
+}
+
+.missing-documents-alert ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.missing-documents-alert li {
+  padding: 12px;
+  margin-bottom: 8px;
+  background: white;
+  border-radius: 4px;
+  border-left: 4px solid #f59e0b;
+}
+
+.missing-documents-alert li.mandatory {
+  border-left-color: #dc2626;
+  background: #fef2f2;
+}
+
+.missing-documents-alert li strong {
+  display: block;
+  margin-bottom: 4px;
+  color: #1f2937;
+}
+
+.missing-documents-alert li p {
+  margin: 0;
+  font-size: 14px;
+  color: #4b5563;
+  line-height: 1.5;
+}
+
+.mandatory-badge {
+  display: inline-block;
+  margin-left: 8px;
+  padding: 2px 8px;
+  background-color: #dc2626;
+  color: white;
+  font-size: 11px;
+  font-weight: 600;
+  border-radius: 10px;
+  text-transform: uppercase;
+}
+
+.upload-section {
+  margin-bottom: 24px;
+}
+
+.document-type-selector {
+  margin-bottom: 16px;
+}
+
+.document-type-selector label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 500;
+  color: #374151;
+}
+
+.document-type-selector select {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 16px;
+  background-color: white;
+  cursor: pointer;
+  transition: border-color 0.2s;
+}
+
+.document-type-selector select.missing {
+  border-color: #f59e0b;
+  background-color: #fffbeb;
+}
+
+.document-type-selector select:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.drop-zone {
+  border: 2px dashed #d1d5db;
+  border-radius: 8px;
+  padding: 40px 20px;
+  text-align: center;
+  transition: all 0.2s;
+  background-color: #f9fafb;
+  cursor: pointer;
+}
+
+.drop-zone:hover {
+  border-color: #9ca3af;
+  background-color: #f3f4f6;
+}
+
+.drop-zone.dragging {
+  border-color: #3b82f6;
+  background-color: #eff6ff;
+}
+
+.drop-zone-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.upload-icon {
+  width: 48px;
+  height: 48px;
+  color: #9ca3af;
+}
+
+.drop-zone-text {
+  margin: 0;
+  font-size: 16px;
+  color: #4b5563;
+}
+
+.browse-button {
+  background: none;
+  border: none;
+  color: #3b82f6;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: underline;
+  padding: 0;
+  font-size: inherit;
+}
+
+.browse-button:hover {
+  color: #2563eb;
+}
+
+.drop-zone-hint {
+  margin: 0;
+  font-size: 14px;
+  color: #6b7280;
+}
+
+.documents-list {
+  margin-top: 24px;
+}
+
+.documents-list h4 {
+  margin: 0 0 12px 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: #1f2937;
+}
+
+.documents-list ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.document-item {
+  padding: 16px;
+  margin-bottom: 12px;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  background: white;
+  transition: all 0.2s;
+}
+
+.document-item.status-uploading {
+  background: #eff6ff;
+  border-color: #3b82f6;
+}
+
+.document-item.status-uploaded {
+  background: #f0fdf4;
+  border-color: #10b981;
+}
+
+.document-item.status-error {
+  background: #fef2f2;
+  border-color: #ef4444;
+}
+
+.document-info {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.document-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.document-type {
+  font-weight: 600;
+  color: #1f2937;
+  font-size: 15px;
+}
+
+.status-badge {
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.status-badge.status-uploading {
+  background: #dbeafe;
+  color: #1e40af;
+}
+
+.status-badge.status-uploaded {
+  background: #d1fae5;
+  color: #065f46;
+}
+
+.status-badge.status-error {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.document-details {
+  display: flex;
+  gap: 16px;
+  font-size: 14px;
+  color: #6b7280;
+}
+
+.file-name {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.file-size {
+  flex-shrink: 0;
+}
+
+.document-item .error-message {
+  margin: 0;
+  padding: 8px 12px;
+  background: #fee2e2;
+  border-radius: 4px;
+  color: #991b1b;
+  font-size: 13px;
+}
+
+@media (max-width: 640px) {
+  .document-upload {
+    padding: 16px;
+  }
+
+  .drop-zone {
+    padding: 30px 15px;
+  }
+
+  .upload-icon {
+    width: 40px;
+    height: 40px;
+  }
+
+  .drop-zone-text {
+    font-size: 14px;
+  }
+
+  .document-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .document-details {
+    flex-direction: column;
+    gap: 4px;
+  }
+}

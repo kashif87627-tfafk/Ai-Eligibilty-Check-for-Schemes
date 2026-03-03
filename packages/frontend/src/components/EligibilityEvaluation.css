@@ -1,0 +1,304 @@
+.eligibility-evaluation {
+  background: white;
+  border-radius: 8px;
+  padding: 24px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.eligibility-evaluation h2 {
+  margin: 0 0 24px 0;
+  font-size: 24px;
+  color: #1f2937;
+}
+
+.scheme-selection {
+  margin-bottom: 20px;
+}
+
+.scheme-selection label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 500;
+  color: #374151;
+}
+
+.scheme-selection select {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 16px;
+  background-color: white;
+  cursor: pointer;
+  transition: border-color 0.2s;
+}
+
+.scheme-selection select:hover:not(:disabled) {
+  border-color: #9ca3af;
+}
+
+.scheme-selection select:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.scheme-selection select:disabled {
+  background-color: #f3f4f6;
+  cursor: not-allowed;
+}
+
+.check-eligibility-button {
+  width: 100%;
+  padding: 12px 24px;
+  background-color: #3b82f6;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.check-eligibility-button:hover:not(:disabled) {
+  background-color: #2563eb;
+}
+
+.check-eligibility-button:disabled {
+  background-color: #9ca3af;
+  cursor: not-allowed;
+}
+
+.evaluation-result {
+  margin-top: 24px;
+  padding-top: 24px;
+  border-top: 2px solid #e5e7eb;
+}
+
+.result-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.result-header h3 {
+  margin: 0;
+  font-size: 20px;
+  color: #1f2937;
+  flex: 1;
+}
+
+.status-badge {
+  padding: 6px 16px;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.status-strongly-eligible {
+  background-color: #d1fae5;
+  color: #065f46;
+}
+
+.status-conditionally-eligible {
+  background-color: #fef3c7;
+  color: #92400e;
+}
+
+.status-needs-verification {
+  background-color: #fed7aa;
+  color: #9a3412;
+}
+
+.status-not-eligible {
+  background-color: #fee2e2;
+  color: #991b1b;
+}
+
+.confidence-section {
+  margin-bottom: 24px;
+  padding: 16px;
+  background-color: #f9fafb;
+  border-radius: 6px;
+}
+
+.confidence-label {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+  font-weight: 500;
+  color: #374151;
+}
+
+.confidence-value {
+  font-size: 20px;
+  font-weight: 700;
+  color: #1f2937;
+}
+
+.confidence-bar {
+  height: 12px;
+  background-color: #e5e7eb;
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.confidence-fill {
+  height: 100%;
+  transition: width 0.5s ease-in-out;
+  border-radius: 6px;
+}
+
+.reasoning-section,
+.missing-criteria-section,
+.missing-documents-section,
+.next-steps-section,
+.matched-criteria-section,
+.unmatched-criteria-section {
+  margin-bottom: 24px;
+}
+
+.reasoning-section h4,
+.missing-criteria-section h4,
+.missing-documents-section h4,
+.next-steps-section h4,
+.matched-criteria-section h4,
+.unmatched-criteria-section h4 {
+  margin: 0 0 12px 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: #1f2937;
+}
+
+.reasoning-section p {
+  margin: 0;
+  line-height: 1.6;
+  color: #4b5563;
+}
+
+.missing-criteria-section ul,
+.missing-documents-section ul,
+.matched-criteria-section ul,
+.unmatched-criteria-section ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.missing-criteria-section li,
+.missing-documents-section li {
+  padding: 12px;
+  margin-bottom: 8px;
+  background-color: #fef3c7;
+  border-left: 4px solid #f59e0b;
+  border-radius: 4px;
+}
+
+.missing-criteria-section li strong,
+.missing-documents-section li strong {
+  display: block;
+  margin-bottom: 4px;
+  color: #92400e;
+}
+
+.missing-criteria-section li p,
+.missing-documents-section li p {
+  margin: 0;
+  font-size: 14px;
+  color: #78350f;
+}
+
+.mandatory-badge {
+  display: inline-block;
+  margin-left: 8px;
+  padding: 2px 8px;
+  background-color: #dc2626;
+  color: white;
+  font-size: 11px;
+  font-weight: 600;
+  border-radius: 10px;
+  text-transform: uppercase;
+}
+
+.next-steps-section ol {
+  margin: 0;
+  padding-left: 20px;
+}
+
+.next-steps-section li {
+  margin-bottom: 8px;
+  line-height: 1.6;
+  color: #4b5563;
+}
+
+.matched-criteria-section li {
+  padding: 8px 12px;
+  margin-bottom: 6px;
+  background-color: #d1fae5;
+  border-left: 4px solid #10b981;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #065f46;
+}
+
+.check-icon {
+  font-weight: bold;
+  color: #059669;
+}
+
+.unmatched-criteria-section li {
+  padding: 12px;
+  margin-bottom: 8px;
+  background-color: #fee2e2;
+  border-left: 4px solid #ef4444;
+  border-radius: 4px;
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.cross-icon {
+  font-weight: bold;
+  color: #dc2626;
+  flex-shrink: 0;
+}
+
+.unmatched-item div {
+  flex: 1;
+}
+
+.unmatched-item strong {
+  display: block;
+  margin-bottom: 4px;
+  color: #991b1b;
+}
+
+.unmatched-item p {
+  margin: 0;
+  font-size: 14px;
+  color: #7f1d1d;
+}
+
+@media (max-width: 640px) {
+  .eligibility-evaluation {
+    padding: 16px;
+  }
+
+  .result-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .status-badge {
+    align-self: flex-start;
+  }
+}
