@@ -1,0 +1,282 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Eligibility Rule Configuration",
+  "description": "JSON schema for eligibility rule configuration format",
+  "type": "object",
+  "required": [
+    "id",
+    "schemeId",
+    "schemeName",
+    "description",
+    "category",
+    "targetAudience",
+    "criteria",
+    "requiredDocuments",
+    "applicableStates",
+    "isOpenEnded",
+    "applicationMode",
+    "trustLevel",
+    "sourceUrl",
+    "lastVerified",
+    "createdAt",
+    "updatedAt"
+  ],
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "Unique identifier for the rule",
+      "pattern": "^rule-[a-z0-9-]+$"
+    },
+    "schemeId": {
+      "type": "string",
+      "description": "Scheme identifier this rule applies to",
+      "pattern": "^scheme-[a-z0-9-]+$"
+    },
+    "schemeName": {
+      "type": "string",
+      "description": "Scheme name",
+      "minLength": 1
+    },
+    "schemeNameTranslations": {
+      "type": "object",
+      "description": "Scheme name translations (language code -> translated name)",
+      "additionalProperties": {
+        "type": "string"
+      }
+    },
+    "description": {
+      "type": "string",
+      "description": "Scheme description",
+      "minLength": 1
+    },
+    "descriptionTranslations": {
+      "type": "object",
+      "description": "Scheme description translations",
+      "additionalProperties": {
+        "type": "string"
+      }
+    },
+    "category": {
+      "type": "string",
+      "description": "Scheme category",
+      "enum": ["education", "health", "employment", "housing", "agriculture", "welfare"]
+    },
+    "targetAudience": {
+      "type": "array",
+      "description": "Target audience tags",
+      "items": {
+        "type": "string"
+      },
+      "minItems": 1
+    },
+    "criteria": {
+      "type": "array",
+      "description": "List of eligibility criteria",
+      "items": {
+        "$ref": "#/definitions/criterion"
+      },
+      "minItems": 1
+    },
+    "requiredDocuments": {
+      "type": "array",
+      "description": "Required documents",
+      "items": {
+        "$ref": "#/definitions/documentRequirement"
+      },
+      "minItems": 1
+    },
+    "applicableStates": {
+      "type": "array",
+      "description": "Applicable states (empty array means all states)",
+      "items": {
+        "type": "string"
+      }
+    },
+    "applicableDistricts": {
+      "type": "array",
+      "description": "Applicable districts (optional)",
+      "items": {
+        "type": "string"
+      }
+    },
+    "ruralUrbanFilter": {
+      "type": "string",
+      "description": "Rural/urban filter",
+      "enum": ["rural", "urban", "both"]
+    },
+    "applicationDeadline": {
+      "type": "string",
+      "description": "Application deadline (ISO 8601 date string)",
+      "format": "date-time"
+    },
+    "isOpenEnded": {
+      "type": "boolean",
+      "description": "Whether the scheme is open-ended (no deadline)"
+    },
+    "processingTime": {
+      "type": "string",
+      "description": "Estimated processing time"
+    },
+    "applicationMode": {
+      "type": "string",
+      "description": "Application mode",
+      "enum": ["online", "offline", "both"]
+    },
+    "applicationUrl": {
+      "type": "string",
+      "description": "Online application URL (if applicable)",
+      "format": "uri"
+    },
+    "officeLocations": {
+      "type": "array",
+      "description": "Office locations for offline application",
+      "items": {
+        "$ref": "#/definitions/officeLocation"
+      }
+    },
+    "trustLevel": {
+      "type": "string",
+      "description": "Trust level of the scheme information",
+      "enum": ["verified", "partially_correct", "misleading", "unverifiable"]
+    },
+    "sourceUrl": {
+      "type": "string",
+      "description": "Source URL for scheme information",
+      "format": "uri"
+    },
+    "lastVerified": {
+      "type": "string",
+      "description": "Last verification date (ISO 8601 date string)",
+      "format": "date-time"
+    },
+    "createdAt": {
+      "type": "string",
+      "description": "Creation timestamp (ISO 8601 date string)",
+      "format": "date-time"
+    },
+    "updatedAt": {
+      "type": "string",
+      "description": "Last update timestamp (ISO 8601 date string)",
+      "format": "date-time"
+    }
+  },
+  "definitions": {
+    "criterion": {
+      "type": "object",
+      "required": ["id", "field", "operator", "value", "weight", "description", "mandatory"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the criterion",
+          "pattern": "^crit-[a-z0-9-]+$"
+        },
+        "field": {
+          "type": "string",
+          "description": "Field name from user profile to evaluate",
+          "minLength": 1
+        },
+        "operator": {
+          "type": "string",
+          "description": "Operator to use for comparison",
+          "enum": ["eq", "lt", "gt", "lte", "gte", "in", "range", "contains"]
+        },
+        "value": {
+          "description": "Expected value(s) for the criterion",
+          "oneOf": [
+            { "type": "string" },
+            { "type": "number" },
+            {
+              "type": "array",
+              "items": {
+                "oneOf": [
+                  { "type": "string" },
+                  { "type": "number" }
+                ]
+              }
+            },
+            {
+              "type": "object",
+              "required": ["min", "max"],
+              "properties": {
+                "min": { "type": "number" },
+                "max": { "type": "number" }
+              }
+            }
+          ]
+        },
+        "weight": {
+          "type": "number",
+          "description": "Weight for confidence score calculation (0-1)",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "description": {
+          "type": "string",
+          "description": "Human-readable description of the criterion",
+          "minLength": 1
+        },
+        "mandatory": {
+          "type": "boolean",
+          "description": "Whether this criterion is mandatory for eligibility"
+        }
+      }
+    },
+    "documentRequirement": {
+      "type": "object",
+      "required": ["type", "name", "mandatory", "description"],
+      "properties": {
+        "type": {
+          "type": "string",
+          "description": "Document type identifier",
+          "minLength": 1
+        },
+        "name": {
+          "type": "string",
+          "description": "Human-readable name",
+          "minLength": 1
+        },
+        "mandatory": {
+          "type": "boolean",
+          "description": "Whether this document is mandatory"
+        },
+        "description": {
+          "type": "string",
+          "description": "Description of the document",
+          "minLength": 1
+        },
+        "alternativeDocuments": {
+          "type": "array",
+          "description": "Alternative documents that can be used instead",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "officeLocation": {
+      "type": "object",
+      "required": ["name", "address", "district"],
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Office name",
+          "minLength": 1
+        },
+        "address": {
+          "type": "string",
+          "description": "Full address",
+          "minLength": 1
+        },
+        "district": {
+          "type": "string",
+          "description": "District",
+          "minLength": 1
+        },
+        "contactNumber": {
+          "type": "string",
+          "description": "Contact number (optional)"
+        }
+      }
+    }
+  }
+}

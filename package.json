@@ -1,0 +1,36 @@
+{
+  "name": "eligibility-mvp",
+  "version": "1.0.0",
+  "description": "Eligibility-First Community Access Platform MVP",
+  "private": true,
+  "workspaces": [
+    "packages/frontend",
+    "packages/backend",
+    "packages/infrastructure"
+  ],
+  "scripts": {
+    "install:all": "npm install",
+    "build": "npm run build --workspaces",
+    "test": "npm run test --workspaces",
+    "deploy": "bash scripts/deploy.sh",
+    "deploy:dev": "bash scripts/deploy.sh dev",
+    "deploy:staging": "bash scripts/deploy.sh staging",
+    "deploy:prod": "bash scripts/deploy.sh prod",
+    "deploy:windows": "cd packages/infrastructure && npx cdk deploy --all --require-approval never",
+    "bootstrap": "cd packages/infrastructure && npx cdk bootstrap",
+    "seed": "bash scripts/seed.sh",
+    "seed:dev": "bash scripts/seed.sh dev",
+    "seed:staging": "bash scripts/seed.sh staging",
+    "seed:prod": "bash scripts/seed.sh prod",
+    "destroy": "cd packages/infrastructure && npx cdk destroy --all",
+    "logs": "aws logs tail /aws/lambda/eligibility-mvp --follow"
+  },
+  "keywords": [
+    "eligibility",
+    "aws",
+    "serverless",
+    "mvp"
+  ],
+  "author": "DataShade",
+  "license": "MIT"
+}
