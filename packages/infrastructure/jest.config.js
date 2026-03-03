@@ -5,10 +5,7 @@ module.exports = {
   testMatch: ['**/*.test.ts'],
   transform: {
     '^.+\\.tsx?$': ['ts-jest', {
-      isolatedModules: true,
-      tsconfig: {
-        types: ['jest', 'node']
-      }
+      isolatedModules: true
     }]
   },
   collectCoverageFrom: [

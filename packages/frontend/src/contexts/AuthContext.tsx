@@ -14,9 +14,8 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 // Mock mode - set to true to bypass AWS Cognito
-const MOCK_AUTH_MODE = true; // Keep true for testing without SMS costs
+const MOCK_AUTH_MODE = false; // Keep true for testing without SMS costs
 const MOCK_USER = { username: 'test@example.com', userId: 'mock-user-id' };
-const MOCK_CREDENTIALS = { username: 'test@example.com', password: 'Test@123' };
 
 // Log mock mode status
 if (MOCK_AUTH_MODE) {
