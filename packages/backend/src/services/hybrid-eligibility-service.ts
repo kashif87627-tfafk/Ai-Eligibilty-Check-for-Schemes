@@ -270,60 +270,27 @@ export async function batchEvaluateHybrid(
  * Generate structured JSON response for API
  * 
  * @param result - Hybrid evaluation result
- * @returns Structured JSON response
+ * @returns Structured JSON response matching frontend expectations
  */
 export function formatHybridResponse(result: HybridEvaluationResult): any {
   return {
-    evaluationId: result.evaluationId,
-    userId: result.userId,
-    scheme: {
-      id: result.schemeId,
-      name: result.schemeName
-    },
-    eligibility: {
-      status: result.status,
-      confidence: result.confidenceScore,
-      explanation: result.reasoning
-    },
-    criteria: {
-      matched: result.matchedCriteria.length,
-      unmatched: result.unmatchedCriteria.length,
-      missing: result.missingCriteria.length,
-      details: {
-        matched: result.matchedCriteria.map(c => ({
-          field: c.criterion.field,
-          description: c.criterion.description,
-          userValue: c.userValue,
-          reason: c.reason
-        })),
-        unmatched: result.unmatchedCriteria.map(c => ({
-          field: c.criterion.field,
-          description: c.criterion.description,
-          userValue: c.userValue,
-          reason: c.reason
-        })),
-        missing: result.missingCriteria.map(m => ({
-          field: m.criterion.field,
-          description: m.criterion.description,
-          explanation: m.explanation
-        }))
-      }
-    },
-    documents: {
-      missing: result.missingDocuments.map(d => ({
-        type: d.document.type,
-        name: d.document.name,
-        mandatory: d.document.mandatory,
-        explanation: d.explanation,
-        alternatives: d.document.alternativeDocuments
-      }))
-    },
-    metadata: {
-      evaluatedAt: result.evaluatedAt,
-      usedLLM: result.usedLLM,
-      evaluationMethod: result.evaluationMethod,
-      ruleBasedConfidence: result.ruleBasedConfidence
-    }
+    evaluation_id: result.evaluationId,
+    user_id: result.userId,
+    scheme_id: result.schemeId,
+    scheme_name: result.schemeName,
+    status: result.status,
+    confidence_score: result.confidenceScore,
+    reasoning: result.reasoning,
+    matched_criteria: result.matchedCriteria,
+    unmatched_criteria: result.unmatchedCriteria,
+    missing_criteria: result.missingCriteria,
+    missing_documents: result.missingDocuments,
+    mandatory_criteria_met: result.mandatoryCriteriaMet,
+    evaluated_at: result.evaluatedAt,
+    // Additional metadata for debugging/analytics
+    used_llm: result.usedLLM,
+    evaluation_method: result.evaluationMethod,
+    rule_based_confidence: result.ruleBasedConfidence
   };
 }
 

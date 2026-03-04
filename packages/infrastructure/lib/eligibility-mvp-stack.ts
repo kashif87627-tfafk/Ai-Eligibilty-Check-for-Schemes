@@ -225,8 +225,8 @@ export class EligibilityMvpStack extends cdk.Stack {
     const profileLambda = new lambda.Function(this, 'ProfileFunction', {
       functionName: 'eligibility-mvp-profile',
       runtime: lambda.Runtime.NODEJS_20_X,
-      handler: 'handlers/profile-handler.handler',
-      code: lambda.Code.fromAsset(path.join(__dirname, '../../backend/dist')),
+      handler: 'profile-handler.handler',
+      code: lambda.Code.fromAsset(path.join(__dirname, '../../backend/lambda-dist')),
       role: lambdaRole,
       environment: {
         TABLE_NAME: this.table.tableName,
@@ -240,8 +240,8 @@ export class EligibilityMvpStack extends cdk.Stack {
     const eligibilityLambda = new lambda.Function(this, 'EligibilityFunction', {
       functionName: 'eligibility-mvp-eligibility',
       runtime: lambda.Runtime.NODEJS_20_X,
-      handler: 'handlers/eligibility-handler.handler',
-      code: lambda.Code.fromAsset(path.join(__dirname, '../../backend/dist')),
+      handler: 'eligibility-handler.handler',
+      code: lambda.Code.fromAsset(path.join(__dirname, '../../backend/lambda-dist')),
       role: lambdaRole,
       environment: {
         TABLE_NAME: this.table.tableName,
@@ -255,8 +255,8 @@ export class EligibilityMvpStack extends cdk.Stack {
     const documentLambda = new lambda.Function(this, 'DocumentFunction', {
       functionName: 'eligibility-mvp-document',
       runtime: lambda.Runtime.NODEJS_20_X,
-      handler: 'handlers/document-handler.handler',
-      code: lambda.Code.fromAsset(path.join(__dirname, '../../backend/dist')),
+      handler: 'document-handler.handler',
+      code: lambda.Code.fromAsset(path.join(__dirname, '../../backend/lambda-dist')),
       role: lambdaRole,
       environment: {
         TABLE_NAME: this.table.tableName,
@@ -271,8 +271,8 @@ export class EligibilityMvpStack extends cdk.Stack {
     const documentProcessorLambda = new lambda.Function(this, 'DocumentProcessorFunction', {
       functionName: 'eligibility-mvp-document-processor',
       runtime: lambda.Runtime.NODEJS_20_X,
-      handler: 'handlers/document-processor-handler.handler',
-      code: lambda.Code.fromAsset(path.join(__dirname, '../../backend/dist')),
+      handler: 'document-processor-handler.handler',
+      code: lambda.Code.fromAsset(path.join(__dirname, '../../backend/lambda-dist')),
       role: lambdaRole,
       environment: {
         TABLE_NAME: this.table.tableName,

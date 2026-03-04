@@ -25,7 +25,11 @@ export function validateCreateUserProfile(input: CreateUserProfileInput): Valida
   if (!input.phoneNumber) {
     errors.push({ field: 'phoneNumber', message: 'Phone number is required' });
   } else if (!PHONE_NUMBER_REGEX.test(input.phoneNumber)) {
-    errors.push({ field: 'phoneNumber', message: 'Invalid phone number format' });
+    // Allow UUID format as fallback (for email-based authentication)
+    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+    if (!uuidRegex.test(input.phoneNumber)) {
+      errors.push({ field: 'phoneNumber', message: 'Invalid phone number format' });
+    }
   }
 
   if (!input.ageRange) {
