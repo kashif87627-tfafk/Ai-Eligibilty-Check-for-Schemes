@@ -2,7 +2,7 @@ import { fetchAuthSession } from 'aws-amplify/auth';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000';
 // Enable mock mode for local testing without backend deployment
-const MOCK_API_MODE = false; // Set to false after deploying AWS infrastructure 
+const MOCK_API_MODE = false; // Set to true for local testing without AWS 
 // Log mock mode status
 if (MOCK_API_MODE) {
   console.warn('🔧 MOCK API MODE ENABLED - All API calls will use mock data. Set MOCK_API_MODE to false in api.ts when backend is deployed.');

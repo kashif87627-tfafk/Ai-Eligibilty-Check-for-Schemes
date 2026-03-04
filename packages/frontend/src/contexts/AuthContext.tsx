@@ -14,7 +14,7 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 // Mock mode - set to true to bypass AWS Cognito
-const MOCK_AUTH_MODE = false; // Set to false after deploying AWS infrastructure
+const MOCK_AUTH_MODE = false; // Set to true for local testing without AWS
 const MOCK_USER = { username: 'test@example.com', userId: 'mock-user-id' };
 
 // Log mock mode status
