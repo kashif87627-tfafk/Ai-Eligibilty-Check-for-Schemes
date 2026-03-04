@@ -1,8 +1,8 @@
 import { fetchAuthSession } from 'aws-amplify/auth';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000';
-// Disable mock mode in test environment, enable in development
-const MOCK_API_MODE = false; 
+// Enable mock mode for local testing without backend deployment
+const MOCK_API_MODE = false; // Set to false after deploying AWS infrastructure 
 // Log mock mode status
 if (MOCK_API_MODE) {
   console.warn('🔧 MOCK API MODE ENABLED - All API calls will use mock data. Set MOCK_API_MODE to false in api.ts when backend is deployed.');
@@ -116,7 +116,7 @@ export const profileApi = {
         profile: mockProfile,
       };
     }
-    return apiRequest<CreateProfileResponse>('/api/v1/profiles', {
+    return apiRequest<CreateProfileResponse>('/profiles', {
       method: 'POST',
       body: JSON.stringify(data),
     });
@@ -131,7 +131,7 @@ export const profileApi = {
       throw new Error('Profile not found');
     }
     const encodedPhone = encodeURIComponent(phoneNumber);
-    return apiRequest<GetProfileResponse>(`/api/v1/profiles/phone/${encodedPhone}`);
+    return apiRequest<GetProfileResponse>(`/profiles/phone/${encodedPhone}`);
   },
 
   getById: async (userId: string): Promise<GetProfileResponse> => {
@@ -142,7 +142,7 @@ export const profileApi = {
       }
       throw new Error('Profile not found');
     }
-    return apiRequest<GetProfileResponse>(`/api/v1/profiles/${userId}`);
+    return apiRequest<GetProfileResponse>(`/profiles/${userId}`);
   },
 
   update: async (userId: string, data: Partial<CreateProfileRequest>): Promise<CreateProfileResponse> => {
@@ -159,7 +159,7 @@ export const profileApi = {
       }
       throw new Error('Profile not found');
     }
-    return apiRequest<CreateProfileResponse>(`/api/v1/profiles/${userId}`, {
+    return apiRequest<CreateProfileResponse>(`/profiles/${userId}`, {
       method: 'PUT',
       body: JSON.stringify(data),
     });
