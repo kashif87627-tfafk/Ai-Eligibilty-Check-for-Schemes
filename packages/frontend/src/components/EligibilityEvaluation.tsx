@@ -9,8 +9,9 @@ interface EligibilityEvaluationProps {
 }
 
 const EligibilityEvaluation = ({ userId, onEvaluationComplete }: EligibilityEvaluationProps) => {
-  const [schemes, setSchemes] = useState<Array<{ id: string; name: string }>>([]);
+  const [schemes, setSchemes] = useState<Array<{ id: string; name: string; createdAt?: string }>>([]);
   const [selectedScheme, setSelectedScheme] = useState<string>('');
+  const [searchQuery, setSearchQuery] = useState<string>('');
   const [loading, setLoading] = useState(false);
   const [loadingSchemes, setLoadingSchemes] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -22,7 +23,11 @@ const EligibilityEvaluation = ({ userId, onEvaluationComplete }: EligibilityEval
       try {
         setLoadingSchemes(true);
         const schemeList = await schemeApi.list();
-        setSchemes(schemeList.map(s => ({ id: s.id, name: s.name })));
+        setSchemes(schemeList.map(s => ({ 
+          id: s.id, 
+          name: s.name,
+          createdAt: s.createdAt 
+        })));
       } catch (err) {
         console.error('Failed to load schemes:', err);
         // Fallback to hardcoded schemes if API fails
@@ -38,6 +43,20 @@ const EligibilityEvaluation = ({ userId, onEvaluationComplete }: EligibilityEval
 
     loadSchemes();
   }, []);
+
+  // Helper function to check if scheme is new (created within last 7 days)
+  const isNewScheme = (createdAt?: string) => {
+    if (!createdAt) return false;
+    const created = new Date(createdAt);
+    const now = new Date();
+    const daysDiff = (now.getTime() - created.getTime()) / (1000 * 60 * 60 * 24);
+    return daysDiff <= 7;
+  };
+
+  // Filter schemes based on search query
+  const filteredSchemes = schemes.filter(scheme =>
+    scheme.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   const handleCheckEligibility = async () => {
     if (!selectedScheme) {
@@ -112,6 +131,24 @@ const EligibilityEvaluation = ({ userId, onEvaluationComplete }: EligibilityEval
       <h2>Check Your Eligibility</h2>
 
       <div className="scheme-selection">
+        <label htmlFor="scheme-search">Search Schemes:</label>
+        <input
+          id="scheme-search"
+          type="text"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          placeholder="Type to search schemes..."
+          disabled={loading || loadingSchemes}
+          style={{
+            width: '100%',
+            padding: '10px',
+            marginBottom: '10px',
+            border: '1px solid #ddd',
+            borderRadius: '4px',
+            fontSize: '14px'
+          }}
+        />
+        
         <label htmlFor="scheme-select">Select a Scheme:</label>
         <select
           id="scheme-select"
@@ -120,14 +157,19 @@ const EligibilityEvaluation = ({ userId, onEvaluationComplete }: EligibilityEval
           disabled={loading || loadingSchemes}
         >
           <option value="">
-            {loadingSchemes ? '-- Loading schemes...' : '-- Choose a scheme --'}
+            {loadingSchemes ? '-- Loading schemes...' : filteredSchemes.length === 0 ? '-- No schemes found --' : '-- Choose a scheme --'}
           </option>
-          {schemes.map((scheme) => (
+          {filteredSchemes.map((scheme) => (
             <option key={scheme.id} value={scheme.id}>
-              {scheme.name}
+              {scheme.name}{isNewScheme(scheme.createdAt) ? ' 🆕 NEW' : ''}
             </option>
           ))}
         </select>
+        {searchQuery && (
+          <p style={{ fontSize: '0.9em', color: '#666', marginTop: '5px' }}>
+            Showing {filteredSchemes.length} of {schemes.length} schemes
+          </p>
+        )}
       </div>
 
       <button

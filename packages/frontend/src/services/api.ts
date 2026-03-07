@@ -452,6 +452,7 @@ export interface SchemeListItem {
   description: string;
   category: string;
   targetAudience: string[];
+  createdAt?: string;
 }
 
 export const schemeApi = {

@@ -334,7 +334,8 @@ export async function listSchemesHandler(_event: APIGatewayProxyEvent): Promise<
       name: rule.schemeName,
       description: rule.description,
       category: rule.category,
-      targetAudience: rule.targetAudience
+      targetAudience: rule.targetAudience,
+      createdAt: rule.createdAt
     }));
     
     return createResponse(200, {
