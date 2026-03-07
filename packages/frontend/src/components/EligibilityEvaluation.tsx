@@ -16,6 +16,15 @@ const EligibilityEvaluation = ({ userId, onEvaluationComplete }: EligibilityEval
   const [loadingSchemes, setLoadingSchemes] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<EligibilityEvaluationResponse | null>(null);
+  const [visitedSchemes, setVisitedSchemes] = useState<Set<string>>(new Set());
+
+  // Load visited schemes from localStorage on mount
+  useEffect(() => {
+    const stored = localStorage.getItem(`visitedSchemes_${userId}`);
+    if (stored) {
+      setVisitedSchemes(new Set(JSON.parse(stored)));
+    }
+  }, [userId]);
 
   // Load schemes dynamically from API
   useEffect(() => {
@@ -53,6 +62,32 @@ const EligibilityEvaluation = ({ userId, onEvaluationComplete }: EligibilityEval
     return daysDiff <= 7;
   };
 
+  // Helper function to get scheme badge
+  const getSchemeBadge = (schemeId: string, createdAt?: string) => {
+    if (visitedSchemes.has(schemeId)) {
+      return ' [Visited]';
+    }
+    if (isNewScheme(createdAt)) {
+      return ' [New]';
+    }
+    return '';
+  };
+
+  // Get selected scheme details for badge display
+  const getSelectedSchemeBadge = () => {
+    if (!selectedScheme) return null;
+    const scheme = schemes.find(s => s.id === selectedScheme);
+    if (!scheme) return null;
+
+    if (visitedSchemes.has(selectedScheme)) {
+      return { text: 'VISITED', color: '#10b981' }; // green
+    }
+    if (isNewScheme(scheme.createdAt)) {
+      return { text: 'NEW', color: '#10b981' }; // green
+    }
+    return null;
+  };
+
   // Filter schemes based on search query
   const filteredSchemes = schemes.filter(scheme =>
     scheme.name.toLowerCase().includes(searchQuery.toLowerCase())
@@ -71,6 +106,12 @@ const EligibilityEvaluation = ({ userId, onEvaluationComplete }: EligibilityEval
 
       const response = await eligibilityApi.evaluate(userId, selectedScheme);
       setResult(response);
+      
+      // Mark scheme as visited
+      const newVisited = new Set(visitedSchemes);
+      newVisited.add(selectedScheme);
+      setVisitedSchemes(newVisited);
+      localStorage.setItem(`visitedSchemes_${userId}`, JSON.stringify(Array.from(newVisited)));
       
       // Notify parent component of evaluation result
       if (onEvaluationComplete) {
@@ -150,21 +191,43 @@ const EligibilityEvaluation = ({ userId, onEvaluationComplete }: EligibilityEval
         />
         
         <label htmlFor="scheme-select">Select a Scheme:</label>
-        <select
-          id="scheme-select"
-          value={selectedScheme}
-          onChange={(e) => setSelectedScheme(e.target.value)}
-          disabled={loading || loadingSchemes}
-        >
-          <option value="">
-            {loadingSchemes ? '-- Loading schemes...' : filteredSchemes.length === 0 ? '-- No schemes found --' : '-- Choose a scheme --'}
-          </option>
-          {filteredSchemes.map((scheme) => (
-            <option key={scheme.id} value={scheme.id}>
-              {scheme.name}{isNewScheme(scheme.createdAt) ? ' 🆕 NEW' : ''}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+          <select
+            id="scheme-select"
+            value={selectedScheme}
+            onChange={(e) => setSelectedScheme(e.target.value)}
+            disabled={loading || loadingSchemes}
+            style={{ flex: 1 }}
+          >
+            <option value="">
+              {loadingSchemes ? '-- Loading schemes...' : filteredSchemes.length === 0 ? '-- No schemes found --' : '-- Choose a scheme --'}
             </option>
-          ))}
-        </select>
+            {filteredSchemes.map((scheme) => (
+              <option key={scheme.id} value={scheme.id}>
+                {scheme.name}{getSchemeBadge(scheme.id, scheme.createdAt)}
+              </option>
+            ))}
+          </select>
+          
+          {getSelectedSchemeBadge() && (
+            <span
+              style={{
+                backgroundColor: getSelectedSchemeBadge()!.color,
+                color: 'white',
+                padding: '6px 16px',
+                borderRadius: '20px',
+                fontSize: '12px',
+                fontWeight: 'bold',
+                letterSpacing: '0.5px',
+                whiteSpace: 'nowrap',
+                boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+              }}
+            >
+              {getSelectedSchemeBadge()!.text}
+            </span>
+          )}
+        </div>
+        
         {searchQuery && (
           <p style={{ fontSize: '0.9em', color: '#666', marginTop: '5px' }}>
             Showing {filteredSchemes.length} of {schemes.length} schemes
