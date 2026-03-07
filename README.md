@@ -26,7 +26,7 @@ Before setting up the project, ensure you have:
 ### 1. Clone the Repository
 
 ```bash
-git clone <your-repo-url>
+git clone https://github.com/23f3000678/Eligibility-First-Community-Access-Platform
 cd Eligibility-First-Community-Access-Platform
 ```
 
@@ -143,7 +143,7 @@ cd packages/frontend
 npm run dev
 ```
 
-The frontend will be available at: **http://localhost:5173**
+The frontend will be available at: **http://localhost:3000**
 
 ### Backend
 
@@ -153,7 +153,7 @@ The backend is already running on AWS Lambda. No local backend server needed!
 
 ### 1. Sign Up
 
-1. Go to http://localhost:5173
+1. Go to http://localhost:3000
 2. Click "Sign up"
 3. Enter your email and password
 4. Check your email for verification code
