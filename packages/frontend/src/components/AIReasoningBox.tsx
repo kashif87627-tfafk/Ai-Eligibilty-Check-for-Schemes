@@ -30,7 +30,7 @@ const AIReasoningBox = ({
       <div className="ai-header">
         <span className="ai-icon">🤖</span>
         <span className="ai-title">AI Analysis</span>
-        <span className="ai-badge">Powered by Claude</span>
+        <span className="ai-badge">Powered by Amazon Nova</span>
       </div>
 
       <div className="ai-reasoning">
