@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { getCurrentUser, signIn, signUp, signOut, confirmSignUp } from 'aws-amplify/auth';
+import { getCurrentUser, signIn, signUp, signOut, confirmSignUp, deleteUser } from 'aws-amplify/auth';
 
 interface AuthContextType {
   user: any | null;
@@ -8,6 +8,7 @@ interface AuthContextType {
   signup: (email: string, password: string) => Promise<void>;
   confirmSignup: (email: string, code: string) => Promise<void>;
   logout: () => Promise<void>;
+  deleteAccount: () => Promise<void>;
   isAuthenticated: boolean;
 }
 
@@ -145,6 +146,23 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
+  const deleteAccount = async () => {
+    try {
+      if (MOCK_AUTH_MODE) {
+        localStorage.removeItem('mockUser');
+        localStorage.removeItem('mockUserProfile');
+        setUser(null);
+        console.log('✅ Mock account deleted');
+      } else {
+        await deleteUser();
+        setUser(null);
+      }
+    } catch (error) {
+      console.error('Delete account error:', error);
+      throw error;
+    }
+  };
+
   const value = {
     user,
     loading,
@@ -152,6 +170,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     signup,
     confirmSignup,
     logout,
+    deleteAccount,
     isAuthenticated: !!user,
   };
 

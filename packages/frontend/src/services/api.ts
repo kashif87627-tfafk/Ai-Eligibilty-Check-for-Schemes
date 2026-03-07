@@ -164,6 +164,17 @@ export const profileApi = {
       body: JSON.stringify(data),
     });
   },
+
+  delete: async (userId: string): Promise<{ message: string }> => {
+    if (MOCK_API_MODE) {
+      localStorage.removeItem('mockUserProfile');
+      console.log('✅ Mock profile deleted');
+      return { message: 'Profile deleted successfully (mock)' };
+    }
+    return apiRequest<{ message: string }>(`/profiles/${userId}`, {
+      method: 'DELETE',
+    });
+  },
 };
 
 // Eligibility Evaluation Types

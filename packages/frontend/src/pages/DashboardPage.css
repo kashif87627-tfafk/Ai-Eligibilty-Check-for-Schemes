@@ -18,6 +18,11 @@
   margin: 0;
 }
 
+.header-actions {
+  display: flex;
+  gap: 10px;
+}
+
 .logout-button {
   padding: 10px 20px;
   background-color: rgba(255, 255, 255, 0.2);
@@ -32,6 +37,22 @@
 
 .logout-button:hover {
   background-color: rgba(255, 255, 255, 0.3);
+}
+
+.delete-account-button {
+  padding: 10px 20px;
+  background-color: rgba(220, 38, 38, 0.9);
+  color: white;
+  border: 1px solid rgba(220, 38, 38, 1);
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.delete-account-button:hover {
+  background-color: rgba(185, 28, 28, 1);
 }
 
 .dashboard-main {

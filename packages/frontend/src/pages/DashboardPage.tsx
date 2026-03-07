@@ -9,7 +9,7 @@ import { profileApi, CreateProfileRequest, UserProfile, EligibilityEvaluationRes
 import './DashboardPage.css';
 
 const DashboardPage = () => {
-  const { user, logout } = useAuth();
+  const { user, logout, deleteAccount } = useAuth();
   const navigate = useNavigate();
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
@@ -48,6 +48,61 @@ const DashboardPage = () => {
       navigate('/login');
     } catch (error) {
       console.error('Logout failed:', error);
+    }
+  };
+
+  const handleDeleteAccount = async () => {
+    const confirmed = window.confirm(
+      '⚠️ WARNING: This will permanently delete your account and all associated data.\n\n' +
+      'This includes:\n' +
+      '• Your profile information\n' +
+      '• Eligibility evaluation history\n' +
+      '• Uploaded documents\n' +
+      '• Your Cognito user account\n\n' +
+      'This action CANNOT be undone.\n\n' +
+      'Are you sure you want to delete your account?'
+    );
+
+    if (!confirmed) {
+      return;
+    }
+
+    // Double confirmation
+    const doubleConfirmed = window.confirm(
+      'Are you ABSOLUTELY sure? Type "DELETE" in the next prompt to confirm.'
+    );
+
+    if (!doubleConfirmed) {
+      return;
+    }
+
+    const finalConfirmation = window.prompt(
+      'Type DELETE (in capital letters) to permanently delete your account:'
+    );
+
+    if (finalConfirmation !== 'DELETE') {
+      setError('Account deletion cancelled. You must type DELETE exactly.');
+      return;
+    }
+
+    try {
+      setLoading(true);
+      setError(null);
+
+      // Delete profile from DynamoDB
+      if (profile) {
+        await profileApi.delete(profile.id);
+      }
+
+      // Delete Cognito user
+      await deleteAccount();
+
+      // Redirect to login
+      navigate('/login');
+    } catch (error) {
+      console.error('Account deletion failed:', error);
+      setError(error instanceof Error ? error.message : 'Failed to delete account');
+      setLoading(false);
     }
   };
 
@@ -100,9 +155,14 @@ const DashboardPage = () => {
     <div className="dashboard-container">
       <header className="dashboard-header">
         <h1>Eligibility Platform</h1>
-        <button onClick={handleLogout} className="logout-button">
-          Logout
-        </button>
+        <div className="header-actions">
+          <button onClick={handleLogout} className="logout-button">
+            Logout
+          </button>
+          <button onClick={handleDeleteAccount} className="delete-account-button">
+            Delete Account
+          </button>
+        </div>
       </header>
 
       <main className="dashboard-main">
