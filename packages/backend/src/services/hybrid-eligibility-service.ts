@@ -55,6 +55,16 @@ export interface HybridEvaluationResult extends EligibilityEvaluationResult {
   
   /** Original rule-based confidence score (before LLM adjustment) */
   ruleBasedConfidence?: number;
+  
+  /** AI-generated scenarios considered during evaluation */
+  aiScenarios?: Array<{
+    icon: string;
+    text: string;
+    impact: string;
+  }>;
+  
+  /** AI-generated actionable suggestions */
+  aiSuggestions?: string[];
 }
 
 /**
@@ -217,7 +227,9 @@ export async function evaluateHybrid(
       reasoning: finalReasoning,
       usedLLM: true,
       evaluationMethod: 'llm_enhanced',
-      ruleBasedConfidence: ruleBasedResult.confidenceScore
+      ruleBasedConfidence: ruleBasedResult.confidenceScore,
+      aiScenarios: llmResult.scenarios,
+      aiSuggestions: llmResult.aiSuggestions
     };
   } catch (error) {
     console.error('LLM evaluation failed, using rule-based result:', error);
@@ -290,7 +302,10 @@ export function formatHybridResponse(result: HybridEvaluationResult): any {
     // Additional metadata for debugging/analytics
     used_llm: result.usedLLM,
     evaluation_method: result.evaluationMethod,
-    rule_based_confidence: result.ruleBasedConfidence
+    rule_based_confidence: result.ruleBasedConfidence,
+    // AI-generated insights
+    ai_scenarios: result.aiScenarios || [],
+    ai_suggestions: result.aiSuggestions || []
   };
 }
 

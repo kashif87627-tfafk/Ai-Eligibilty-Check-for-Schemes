@@ -12,6 +12,7 @@ import {
   GetCommand,
   QueryCommand,
   DeleteCommand,
+  ScanCommand,
 } from '@aws-sdk/lib-dynamodb';
 import { EligibilityRule, EligibilityRuleDynamoDBItem } from '../types/eligibility-rules';
 
@@ -168,12 +169,11 @@ export async function getEligibilityRulesByStateAndCategory(
  */
 export async function getAllEligibilityRules(): Promise<EligibilityRule[]> {
   const result = await docClient.send(
-    new QueryCommand({
+    new ScanCommand({
       TableName: TABLE_NAME,
-      IndexName: 'GSI1',
-      KeyConditionExpression: 'begins_with(GSI1SK, :prefix)',
+      FilterExpression: 'entityType = :entityType',
       ExpressionAttributeValues: {
-        ':prefix': 'CATEGORY#',
+        ':entityType': 'ELIGIBILITY_RULE',
       },
     })
   );

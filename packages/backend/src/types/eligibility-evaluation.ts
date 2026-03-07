@@ -96,6 +96,16 @@ export interface EligibilityEvaluationResult {
   
   /** Timestamp of evaluation */
   evaluatedAt: string;
+  
+  /** AI-generated scenarios (optional, from Bedrock) */
+  scenarios?: Array<{
+    icon: string;
+    text: string;
+    impact: string;
+  }>;
+  
+  /** AI-generated suggestions (optional, from Bedrock) */
+  aiSuggestions?: string[];
 }
 
 /**

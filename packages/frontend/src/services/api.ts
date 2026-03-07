@@ -217,6 +217,12 @@ export interface EligibilityEvaluationResponse {
   reasoning: string;
   suggested_next_steps?: string[];
   evaluated_at: string;
+  ai_scenarios?: Array<{
+    icon: string;
+    text: string;
+    impact: string;
+  }>;
+  ai_suggestions?: string[];
 }
 
 export interface EvaluateEligibilityRequest {
@@ -407,5 +413,79 @@ export const documentApi = {
       return doc;
     }
     return apiRequest<DocumentMetadata>(`/api/v1/documents/${documentId}`);
+  },
+};
+
+
+// Scheme Discovery Types
+export interface DiscoveredScheme {
+  name: string;
+  description: string;
+  category: string;
+  targetAudience: string[];
+  eligibility: {
+    ageRange?: string[];
+    incomeLimit?: string;
+    states?: string[];
+    otherCriteria?: string[];
+  };
+  documents: string[];
+  applicationMode: string;
+  sourceUrl: string;
+  confidence: number;
+}
+
+export interface SchemeListItem {
+  id: string;
+  name: string;
+  description: string;
+  category: string;
+  targetAudience: string[];
+}
+
+export const schemeApi = {
+  discover: async (query: string, category?: string, state?: string): Promise<DiscoveredScheme[]> => {
+    if (MOCK_API_MODE) {
+      console.log('✅ Mock scheme discovery');
+      return [];
+    }
+    const response = await apiRequest<{ success: boolean; data: { schemes: DiscoveredScheme[] } }>(
+      '/api/v1/schemes/discover',
+      {
+        method: 'POST',
+        body: JSON.stringify({ query, category, state }),
+      }
+    );
+    return response.data.schemes;
+  },
+
+  add: async (scheme: DiscoveredScheme): Promise<{ schemeId: string; schemeName: string }> => {
+    if (MOCK_API_MODE) {
+      console.log('✅ Mock scheme added');
+      return { schemeId: 'mock-scheme', schemeName: scheme.name };
+    }
+    const response = await apiRequest<{ success: boolean; data: { schemeId: string; schemeName: string } }>(
+      '/api/v1/schemes/add',
+      {
+        method: 'POST',
+        body: JSON.stringify({ scheme }),
+      }
+    );
+    return response.data;
+  },
+
+  list: async (): Promise<SchemeListItem[]> => {
+    if (MOCK_API_MODE) {
+      console.log('✅ Mock scheme list');
+      return [
+        { id: 'scheme-pm-scholarship', name: 'Prime Minister Scholarship Scheme', description: '', category: 'education', targetAudience: [] },
+        { id: 'scheme-skill-development', name: 'Pradhan Mantri Kaushal Vikas Yojana (PMKVY)', description: '', category: 'employment', targetAudience: [] },
+        { id: 'scheme-widow-pension-karnataka', name: 'Karnataka Widow Pension Scheme', description: '', category: 'welfare', targetAudience: [] },
+      ];
+    }
+    const response = await apiRequest<{ success: boolean; data: { schemes: SchemeListItem[]}}>(
+      '/api/v1/schemes/list'
+    );
+    return response.data.schemes;
   },
 };

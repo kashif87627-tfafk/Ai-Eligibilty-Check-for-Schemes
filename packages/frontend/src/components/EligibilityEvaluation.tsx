@@ -1,5 +1,6 @@
-import { useState } from 'react';
-import { eligibilityApi, EligibilityEvaluationResponse } from '../services/api';
+import { useState, useEffect } from 'react';
+import { eligibilityApi, schemeApi, EligibilityEvaluationResponse } from '../services/api';
+import AIReasoningBox from './AIReasoningBox';
 import './EligibilityEvaluation.css';
 
 interface EligibilityEvaluationProps {
@@ -7,17 +8,36 @@ interface EligibilityEvaluationProps {
   onEvaluationComplete?: (result: EligibilityEvaluationResponse | null) => void;
 }
 
-const SAMPLE_SCHEMES = [
-  { id: 'scheme-pm-scholarship', name: 'Prime Minister Scholarship Scheme' },
-  { id: 'scheme-skill-development', name: 'Pradhan Mantri Kaushal Vikas Yojana (PMKVY)' },
-  { id: 'scheme-widow-pension-karnataka', name: 'Karnataka Widow Pension Scheme' },
-];
-
 const EligibilityEvaluation = ({ userId, onEvaluationComplete }: EligibilityEvaluationProps) => {
+  const [schemes, setSchemes] = useState<Array<{ id: string; name: string }>>([]);
   const [selectedScheme, setSelectedScheme] = useState<string>('');
   const [loading, setLoading] = useState(false);
+  const [loadingSchemes, setLoadingSchemes] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<EligibilityEvaluationResponse | null>(null);
+
+  // Load schemes dynamically from API
+  useEffect(() => {
+    const loadSchemes = async () => {
+      try {
+        setLoadingSchemes(true);
+        const schemeList = await schemeApi.list();
+        setSchemes(schemeList.map(s => ({ id: s.id, name: s.name })));
+      } catch (err) {
+        console.error('Failed to load schemes:', err);
+        // Fallback to hardcoded schemes if API fails
+        setSchemes([
+          { id: 'scheme-pm-scholarship', name: 'Prime Minister Scholarship Scheme' },
+          { id: 'scheme-skill-development', name: 'Pradhan Mantri Kaushal Vikas Yojana (PMKVY)' },
+          { id: 'scheme-widow-pension-karnataka', name: 'Karnataka Widow Pension Scheme' },
+        ]);
+      } finally {
+        setLoadingSchemes(false);
+      }
+    };
+
+    loadSchemes();
+  }, []);
 
   const handleCheckEligibility = async () => {
     if (!selectedScheme) {
@@ -97,10 +117,12 @@ const EligibilityEvaluation = ({ userId, onEvaluationComplete }: EligibilityEval
           id="scheme-select"
           value={selectedScheme}
           onChange={(e) => setSelectedScheme(e.target.value)}
-          disabled={loading}
+          disabled={loading || loadingSchemes}
         >
-          <option value="">-- Choose a scheme --</option>
-          {SAMPLE_SCHEMES.map((scheme) => (
+          <option value="">
+            {loadingSchemes ? '-- Loading schemes...' : '-- Choose a scheme --'}
+          </option>
+          {schemes.map((scheme) => (
             <option key={scheme.id} value={scheme.id}>
               {scheme.name}
             </option>
@@ -147,7 +169,16 @@ const EligibilityEvaluation = ({ userId, onEvaluationComplete }: EligibilityEval
             </div>
           </div>
 
-          {result.reasoning && (
+          {/* AI Reasoning Box */}
+          <AIReasoningBox
+            reasoning={result.reasoning}
+            scenarios={result.ai_scenarios}
+            suggestions={result.ai_suggestions}
+            confidenceScore={result.confidence_score}
+            usedLLM={true}
+          />
+
+          {result.reasoning && !result.ai_scenarios && (
             <div className="reasoning-section">
               <h4>Why/Why Not</h4>
               <p>{result.reasoning}</p>

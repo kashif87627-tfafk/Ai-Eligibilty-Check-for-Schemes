@@ -1,0 +1,184 @@
+.ai-reasoning-box {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 12px;
+  padding: 24px;
+  margin: 24px 0;
+  color: white;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.ai-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.ai-icon {
+  font-size: 24px;
+}
+
+.ai-title {
+  font-size: 18px;
+  font-weight: 600;
+  flex: 1;
+}
+
+.ai-badge {
+  background: rgba(255, 255, 255, 0.2);
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.ai-reasoning {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 20px;
+  line-height: 1.6;
+}
+
+.ai-reasoning p {
+  margin: 0;
+  font-size: 15px;
+}
+
+.ai-scenarios {
+  margin-bottom: 20px;
+}
+
+.ai-scenarios h4 {
+  margin: 0 0 12px 0;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.scenarios-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.scenario {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: rgba(255, 255, 255, 0.1);
+  padding: 12px;
+  border-radius: 8px;
+  border-left: 3px solid;
+}
+
+.scenario-positive {
+  border-left-color: #10b981;
+}
+
+.scenario-negative {
+  border-left-color: #ef4444;
+}
+
+.scenario-neutral {
+  border-left-color: #f59e0b;
+}
+
+.scenario-icon {
+  font-size: 18px;
+  min-width: 24px;
+  text-align: center;
+}
+
+.scenario-text {
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.ai-suggestions {
+  margin-bottom: 20px;
+}
+
+.ai-suggestions h4 {
+  margin: 0 0 12px 0;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.suggestions-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.suggestion-item {
+  background: rgba(255, 255, 255, 0.1);
+  padding: 12px 16px;
+  border-radius: 8px;
+  font-size: 14px;
+  line-height: 1.5;
+  position: relative;
+  padding-left: 40px;
+}
+
+.suggestion-item::before {
+  content: '💡';
+  position: absolute;
+  left: 12px;
+  top: 12px;
+  font-size: 16px;
+}
+
+.ai-confidence {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  padding: 12px 16px;
+}
+
+.confidence-label {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.confidence-value {
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.confidence-bar-small {
+  height: 6px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.confidence-fill-small {
+  height: 100%;
+  transition: width 0.3s ease;
+  border-radius: 3px;
+}
+
+@media (max-width: 768px) {
+  .ai-reasoning-box {
+    padding: 16px;
+  }
+
+  .ai-header {
+    flex-wrap: wrap;
+  }
+
+  .ai-badge {
+    order: 3;
+    width: 100%;
+    text-align: center;
+    margin-top: 8px;
+  }
+}

@@ -207,7 +207,7 @@ export class EligibilityMvpStack extends cdk.Stack {
     // Grant Lambda permissions to S3
     this.documentBucket.grantReadWrite(lambdaRole);
 
-    // Grant Lambda permissions to Bedrock
+    // Grant Lambda permissions to Bedrock (foundation models and inference profiles)
     lambdaRole.addToPolicy(
       new iam.PolicyStatement({
         effect: iam.Effect.ALLOW,
@@ -216,7 +216,20 @@ export class EligibilityMvpStack extends cdk.Stack {
           'bedrock:InvokeModelWithResponseStream',
         ],
         resources: [
+          // Foundation models in ap-south-1 (local region)
+          `arn:aws:bedrock:${this.region}::foundation-model/amazon.nova-lite-v1:0`,
+          `arn:aws:bedrock:${this.region}::foundation-model/amazon.nova-micro-v1:0`,
           `arn:aws:bedrock:${this.region}::foundation-model/anthropic.claude-3-sonnet-20240229-v1:0`,
+          // Foundation models in APAC regions (for inference profile routing)
+          'arn:aws:bedrock:ap-southeast-2::foundation-model/amazon.nova-lite-v1:0',
+          'arn:aws:bedrock:ap-northeast-1::foundation-model/amazon.nova-lite-v1:0',
+          'arn:aws:bedrock:ap-northeast-2::foundation-model/amazon.nova-lite-v1:0',
+          'arn:aws:bedrock:ap-southeast-1::foundation-model/amazon.nova-lite-v1:0',
+          'arn:aws:bedrock:ap-northeast-3::foundation-model/amazon.nova-lite-v1:0',
+          // Inference profiles (required for Nova models)
+          `arn:aws:bedrock:${this.region}:${this.account}:inference-profile/apac.amazon.nova-lite-v1:0`,
+          `arn:aws:bedrock:${this.region}:${this.account}:inference-profile/apac.amazon.nova-micro-v1:0`,
+          `arn:aws:bedrock:${this.region}:${this.account}:inference-profile/apac.amazon.nova-pro-v1:0`,
         ],
       })
     );
@@ -280,6 +293,22 @@ export class EligibilityMvpStack extends cdk.Stack {
       },
       timeout: cdk.Duration.seconds(60),
       memorySize: 512,
+      logRetention: logs.RetentionDays.ONE_WEEK,
+    });
+
+    // Lambda Function for Scheme Discovery and Management
+    const schemeLambda = new lambda.Function(this, 'SchemeFunction', {
+      functionName: 'eligibility-mvp-scheme',
+      runtime: lambda.Runtime.NODEJS_20_X,
+      handler: 'scheme-handler.handler',
+      code: lambda.Code.fromAsset(path.join(__dirname, '../../backend/lambda-dist')),
+      role: lambdaRole,
+      environment: {
+        TABLE_NAME: this.table.tableName,
+        DYNAMODB_TABLE_NAME: this.table.tableName,
+      },
+      timeout: cdk.Duration.seconds(90), // Longer timeout for web search + LLM
+      memorySize: 1024, // More memory for LLM processing
       logRetention: logs.RetentionDays.ONE_WEEK,
     });
 
@@ -379,6 +408,30 @@ export class EligibilityMvpStack extends cdk.Stack {
     // PUT /documents/{documentId}/status - Update document status
     const documentStatus = documentById.addResource('status');
     documentStatus.addMethod('PUT', new apigateway.LambdaIntegration(documentLambda), {
+      authorizer,
+      authorizationType: apigateway.AuthorizationType.COGNITO,
+    });
+
+    // Scheme API endpoints
+    const schemes = v1.addResource('schemes');
+
+    // POST /api/v1/schemes/discover - Discover schemes using Claude
+    const discover = schemes.addResource('discover');
+    discover.addMethod('POST', new apigateway.LambdaIntegration(schemeLambda), {
+      authorizer,
+      authorizationType: apigateway.AuthorizationType.COGNITO,
+    });
+
+    // POST /api/v1/schemes/add - Add discovered scheme to database
+    const addScheme = schemes.addResource('add');
+    addScheme.addMethod('POST', new apigateway.LambdaIntegration(schemeLambda), {
+      authorizer,
+      authorizationType: apigateway.AuthorizationType.COGNITO,
+    });
+
+    // GET /api/v1/schemes/list - List all schemes
+    const listSchemes = schemes.addResource('list');
+    listSchemes.addMethod('GET', new apigateway.LambdaIntegration(schemeLambda), {
       authorizer,
       authorizationType: apigateway.AuthorizationType.COGNITO,
     });

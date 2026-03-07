@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import UserProfileForm from '../components/UserProfileForm';
 import EligibilityEvaluation from '../components/EligibilityEvaluation';
 import DocumentUpload from '../components/DocumentUpload';
+import SchemeDiscovery from '../components/SchemeDiscovery';
 import { profileApi, CreateProfileRequest, UserProfile, EligibilityEvaluationResponse } from '../services/api';
 import './DashboardPage.css';
 
@@ -15,6 +16,7 @@ const DashboardPage = () => {
   const [error, setError] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [evaluationResult, setEvaluationResult] = useState<EligibilityEvaluationResponse | null>(null);
+  const [activeTab, setActiveTab] = useState<'eligibility' | 'discovery'>('eligibility');
 
   useEffect(() => {
     loadProfile();
@@ -146,28 +148,52 @@ const DashboardPage = () => {
                   </button>
                 </div>
 
-                <div className="eligibility-section">
-                  <EligibilityEvaluation 
-                    userId={profile.id} 
-                    onEvaluationComplete={setEvaluationResult}
-                  />
+                <div className="tabs-container">
+                  <div className="tabs">
+                    <button
+                      className={`tab ${activeTab === 'eligibility' ? 'active' : ''}`}
+                      onClick={() => setActiveTab('eligibility')}
+                    >
+                      Check Eligibility
+                    </button>
+                    <button
+                      className={`tab ${activeTab === 'discovery' ? 'active' : ''}`}
+                      onClick={() => setActiveTab('discovery')}
+                    >
+                      🤖 Discover Schemes
+                    </button>
+                  </div>
                 </div>
 
-                <div className="documents-section">
-                  <DocumentUpload 
-                    userId={profile.id}
-                    missingDocuments={evaluationResult?.missing_documents?.map(doc => ({
-                      type: doc.document.type,
-                      name: doc.document.name,
-                      mandatory: doc.document.mandatory,
-                      description: doc.explanation,
-                    }))}
-                    onUploadComplete={() => {
-                      // Optionally trigger re-evaluation after document upload
-                      console.log('Document uploaded, consider re-evaluating eligibility');
-                    }}
-                  />
-                </div>
+                {activeTab === 'eligibility' ? (
+                  <>
+                    <div className="eligibility-section">
+                      <EligibilityEvaluation 
+                        userId={profile.id} 
+                        onEvaluationComplete={setEvaluationResult}
+                      />
+                    </div>
+
+                    <div className="documents-section">
+                      <DocumentUpload 
+                        userId={profile.id}
+                        missingDocuments={evaluationResult?.missing_documents?.map(doc => ({
+                          type: doc.document.type,
+                          name: doc.document.name,
+                          mandatory: doc.document.mandatory,
+                          description: doc.explanation,
+                        }))}
+                        onUploadComplete={() => {
+                          console.log('Document uploaded, consider re-evaluating eligibility');
+                        }}
+                      />
+                    </div>
+                  </>
+                ) : (
+                  <div className="discovery-section">
+                    <SchemeDiscovery />
+                  </div>
+                )}
               </div>
             )}
           </>

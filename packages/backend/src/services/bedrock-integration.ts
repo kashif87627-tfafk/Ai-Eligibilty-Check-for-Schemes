@@ -19,7 +19,8 @@ import { checkRateLimit, incrementRateLimit } from './rate-limiter';
 /**
  * Bedrock model configuration
  */
-const BEDROCK_MODEL_ID = 'anthropic.claude-3-sonnet-20240229-v1:0';
+// Use APAC inference profile for Nova Lite (works with AWS credits, no payment method needed)
+const BEDROCK_MODEL_ID = 'apac.amazon.nova-lite-v1:0';
 const BEDROCK_REGION = process.env.AWS_REGION || 'ap-south-1';
 const MAX_TOKENS = 2048;
 const TEMPERATURE = 0.3; // Lower temperature for more deterministic responses
@@ -32,6 +33,15 @@ const bedrockClient = new BedrockRuntimeClient({
 });
 
 /**
+ * Scenario considered by AI during evaluation
+ */
+export interface AIScenario {
+  icon: '✓' | '✗' | '⚠️' | '💡';
+  text: string;
+  impact: 'positive' | 'negative' | 'neutral';
+}
+
+/**
  * Bedrock LLM response structure
  */
 export interface BedrockLLMResponse {
@@ -40,6 +50,8 @@ export interface BedrockLLMResponse {
   reasoning: string;
   contextualInsights?: string;
   suggestedNextSteps?: string[];
+  scenarios?: AIScenario[];
+  aiSuggestions?: string[];
 }
 
 /**
@@ -121,23 +133,51 @@ Task:
 3. Calculate a confidence score (0-100) based on how well the user matches the criteria
 4. Classify eligibility as one of: strongly_eligible, conditionally_eligible, needs_verification, not_eligible
 5. Provide clear, simple reasoning in 2-3 sentences explaining why the user is or isn't eligible
-6. Suggest 2-3 actionable next steps if the user is conditionally eligible or needs verification
+6. Generate specific scenarios you considered during evaluation (with icons: ✓ for positive, ✗ for negative, ⚠️ for borderline)
+7. Provide 3-5 actionable AI suggestions to improve eligibility or application success
 
 Important Guidelines:
 - Be empathetic and supportive in your language
 - Acknowledge uncertainty when information is incomplete
-- Consider contextual factors (e.g., rural vs urban, regional variations)
+- Consider contextual factors (e.g., rural vs urban, regional variations, cost of living)
 - Prioritize mandatory criteria in your evaluation
 - Use simple language suitable for users with limited literacy
+- For borderline cases (within 10% of limits), consider flexibility
+- Suggest document alternatives when possible
+- Provide specific, actionable advice
 
 Output your response in the following JSON format:
 {
   "status": "strongly_eligible" | "conditionally_eligible" | "needs_verification" | "not_eligible",
   "confidence": <number between 0-100>,
   "reasoning": "<2-3 sentence explanation>",
+  "scenarios": [
+    {
+      "icon": "✓" | "✗" | "⚠️",
+      "text": "<specific scenario description>",
+      "impact": "positive" | "negative" | "neutral"
+    }
+  ],
+  "aiSuggestions": [
+    "<specific actionable suggestion 1>",
+    "<specific actionable suggestion 2>",
+    "<specific actionable suggestion 3>"
+  ],
   "contextualInsights": "<optional: any contextual factors considered>",
   "suggestedNextSteps": ["<step 1>", "<step 2>", "<step 3>"]
 }
+
+Example scenarios:
+- "✓ Age 24 - Within eligible range (18-35)" (positive)
+- "⚠️ Income ₹2.05L - Slightly above ₹2L limit (2.5% over)" (neutral)
+- "✗ Missing income certificate - Required document" (negative)
+- "✓ Location: Rural Karnataka - Priority area for this scheme" (positive)
+
+Example AI suggestions:
+- "Apply with rent receipts to demonstrate high living costs in your urban area"
+- "Get income certificate from Tehsildar office (typically takes 2-3 days)"
+- "Mention your OBC category prominently in the application for preference"
+- "Consider applying to similar scheme XYZ which has higher income limit"
 
 Respond with ONLY the JSON object, no additional text.`;
 
@@ -191,7 +231,9 @@ export function parseLLMResponse(responseText: string): BedrockLLMResponse {
       confidence: parsed.confidence,
       reasoning: parsed.reasoning,
       contextualInsights: parsed.contextualInsights,
-      suggestedNextSteps: parsed.suggestedNextSteps || []
+      suggestedNextSteps: parsed.suggestedNextSteps || [],
+      scenarios: parsed.scenarios || [],
+      aiSuggestions: parsed.aiSuggestions || []
     };
   } catch (error) {
     throw new Error(`Failed to parse LLM response: ${error instanceof Error ? error.message : 'Unknown error'}`);
@@ -220,17 +262,19 @@ async function invokeBedrockModel(
     }
   }
   
-  // Prepare the request payload for Claude 3
+  // Prepare the request payload for Amazon Nova
   const requestBody = {
-    anthropic_version: 'bedrock-2023-05-31',
-    max_tokens: MAX_TOKENS,
-    temperature: TEMPERATURE,
     messages: [
       {
         role: 'user',
-        content: prompt
+        content: [{ text: prompt }]
       }
-    ]
+    ],
+    inferenceConfig: {
+      max_new_tokens: MAX_TOKENS,
+      temperature: TEMPERATURE,
+      top_p: 0.9
+    }
   };
   
   const input: InvokeModelCommandInput = {
@@ -255,9 +299,9 @@ async function invokeBedrockModel(
     // Parse response
     const responseBody = JSON.parse(new TextDecoder().decode(response.body));
     
-    // Track metrics
-    const inputTokens = responseBody.usage?.input_tokens || 0;
-    const outputTokens = responseBody.usage?.output_tokens || 0;
+    // Track metrics (Nova format)
+    const inputTokens = responseBody.usage?.inputTokens || 0;
+    const outputTokens = responseBody.usage?.outputTokens || 0;
     await trackBedrockCall(BEDROCK_MODEL_ID, inputTokens, outputTokens);
     
     // Increment rate limit counter if userId provided
@@ -265,9 +309,12 @@ async function invokeBedrockModel(
       await incrementRateLimit(options.userId, 'bedrock');
     }
     
-    // Extract text from Claude 3 response format
-    if (responseBody.content && Array.isArray(responseBody.content) && responseBody.content.length > 0) {
-      return responseBody.content[0].text;
+    // Extract text from Nova response format
+    if (responseBody.output?.message?.content && Array.isArray(responseBody.output.message.content)) {
+      const textContent = responseBody.output.message.content.find((c: any) => c.text);
+      if (textContent) {
+        return textContent.text;
+      }
     }
     
     throw new Error('Invalid response format from Bedrock');
