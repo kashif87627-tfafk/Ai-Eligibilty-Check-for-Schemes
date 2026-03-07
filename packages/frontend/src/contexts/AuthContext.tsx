@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { getCurrentUser, signIn, signUp, signOut, confirmSignUp, deleteUser } from 'aws-amplify/auth';
+import { getCurrentUser, signIn, signUp, signOut, confirmSignUp, deleteUser, resendSignUpCode } from 'aws-amplify/auth';
 
 interface AuthContextType {
   user: any | null;
@@ -7,6 +7,7 @@ interface AuthContextType {
   login: (email: string, password: string) => Promise<void>;
   signup: (email: string, password: string) => Promise<void>;
   confirmSignup: (email: string, code: string) => Promise<void>;
+  resendCode: (email: string) => Promise<void>;
   logout: () => Promise<void>;
   deleteAccount: () => Promise<void>;
   isAuthenticated: boolean;
@@ -130,6 +131,22 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
+  const resendCode = async (email: string) => {
+    try {
+      if (MOCK_AUTH_MODE) {
+        // Mock resend - always succeeds
+        console.log('✅ Mock resend code successful');
+      } else {
+        await resendSignUpCode({
+          username: email,
+        });
+      }
+    } catch (error) {
+      console.error('Resend code error:', error);
+      throw error;
+    }
+  };
+
   const logout = async () => {
     try {
       if (MOCK_AUTH_MODE) {
@@ -169,6 +186,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     login,
     signup,
     confirmSignup,
+    resendCode,
     logout,
     deleteAccount,
     isAuthenticated: !!user,
