@@ -70,6 +70,8 @@ export interface CreateProfileRequest {
   location: Location;
   language: string;
   consentGiven: boolean;
+  email?: string;
+  name?: string;
   gender?: 'male' | 'female' | 'other' | 'prefer_not_to_say';
   education?: 'no_formal' | 'primary' | 'secondary' | 'graduate' | 'postgraduate';
   occupation?: string;

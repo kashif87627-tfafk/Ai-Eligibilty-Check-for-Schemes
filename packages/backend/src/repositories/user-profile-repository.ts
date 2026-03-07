@@ -33,6 +33,8 @@ interface DynamoDBUserProfile {
   EntityType: string;
   id: string;
   phoneNumber: string;
+  email?: string;
+  name?: string;
   aadhaarHash?: string;
   ageRange: string;
   gender?: string;
@@ -71,6 +73,8 @@ function toDynamoDBItem(profile: UserProfile): DynamoDBUserProfile {
     EntityType: 'UserProfile',
     id: profile.id,
     phoneNumber: profile.phoneNumber,
+    email: profile.email,
+    name: profile.name,
     aadhaarHash: profile.aadhaarHash,
     ageRange: profile.ageRange,
     gender: profile.gender,
@@ -96,6 +100,8 @@ function fromDynamoDBItem(item: DynamoDBUserProfile): UserProfile {
   return {
     id: item.id,
     phoneNumber: item.phoneNumber,
+    email: item.email,
+    name: item.name,
     aadhaarHash: item.aadhaarHash,
     ageRange: item.ageRange as UserProfile['ageRange'],
     gender: item.gender as UserProfile['gender'],
@@ -128,6 +134,8 @@ export class UserProfileRepository {
     const profile: UserProfile = {
       id: uuidv4(),
       phoneNumber: input.phoneNumber,
+      email: input.email,
+      name: input.name,
       ageRange: input.ageRange,
       location: input.location,
       language: input.language,

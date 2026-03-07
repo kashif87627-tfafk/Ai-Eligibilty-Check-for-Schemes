@@ -118,6 +118,8 @@ const DashboardPage = () => {
         location: data.location,
         language: data.language,
         consentGiven: data.consentGiven,
+        ...(data.email && data.email !== '' && { email: data.email }),
+        ...(data.name && data.name !== '' && { name: data.name }),
         ...(data.gender && data.gender !== '' && { gender: data.gender }),
         ...(data.education && data.education !== '' && { education: data.education }),
         ...(data.occupation && { occupation: data.occupation }),
@@ -191,6 +193,8 @@ const DashboardPage = () => {
                   phoneNumber={user?.username || ''}
                   initialData={profile ? {
                     phoneNumber: profile.phoneNumber,
+                    email: user?.email || '',
+                    name: profile.name,
                     ageRange: profile.ageRange,
                     gender: profile.gender,
                     location: profile.location,
@@ -203,7 +207,9 @@ const DashboardPage = () => {
                     language: profile.language,
                     consentGiven: profile.consentGiven,
                     sensitiveDataConsent: profile.sensitiveDataConsent
-                  } : undefined}
+                  } : {
+                    email: user?.email || ''
+                  }}
                 />
                 {profile && (
                   <button 
@@ -218,7 +224,12 @@ const DashboardPage = () => {
             ) : (
               <div className="profile-section">
                 <div className="profile-summary">
-                  <h2>Your Profile</h2>
+                  <h2>{profile.name || 'Your Profile'}</h2>
+                  {user?.email && (
+                    <p style={{ fontSize: '0.9em', color: '#666', marginTop: '-10px', marginBottom: '15px' }}>
+                      {user.email}
+                    </p>
+                  )}
                   <div className="profile-details">
                     <p><strong>Age Range:</strong> {profile.ageRange}</p>
                     <p><strong>Location:</strong> {profile.location.district}, {profile.location.state}</p>

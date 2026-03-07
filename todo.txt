@@ -1,0 +1,14 @@
+**********created by kashif dont make any changes*****************
+1. new scheme generation----------------------------DONE
+2. Ai reasoning box---------------------------------DONE
+3. Scheme documnets upload from result page---------DONE
+4. Logout+ Delete user------------------------------DONE
+5.delete user with only otp from email
+6.resend otp button---------------------------------DONE
+7.Reset password woth OTP button
+8.NEW UI design
+9.Two select Schemes opt, one for/ personal user other for/ universal user 
+10. "new" for/ new schemes and visited for/ visited ones----DONE
+11. "new" for/ new schemes and visited for/ visited ones with Custom select for/ modern look
+12. Show user email AND NAME in dashboard----------------------DONE
+13. Reset password option

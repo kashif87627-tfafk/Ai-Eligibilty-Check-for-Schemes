@@ -10,6 +10,8 @@ interface Location {
 
 interface UserProfileFormData {
   phoneNumber: string;
+  email?: string;
+  name?: string;
   ageRange: '18-25' | '26-35' | '36-45' | '46-60' | '60+' | '';
   gender?: 'male' | 'female' | 'other' | 'prefer_not_to_say' | '';
   location: Location;
@@ -47,6 +49,8 @@ const INDIAN_STATES = [
 const UserProfileForm: React.FC<UserProfileFormProps> = ({ onSubmit, initialData, phoneNumber }) => {
   const [formData, setFormData] = useState<UserProfileFormData>({
     phoneNumber,
+    email: initialData?.email || '',
+    name: initialData?.name || '',
     ageRange: initialData?.ageRange || '',
     gender: initialData?.gender || '',
     location: initialData?.location || {
@@ -175,6 +179,31 @@ const UserProfileForm: React.FC<UserProfileFormProps> = ({ onSubmit, initialData
       {/* Required Fields Section */}
       <section className="form-section">
         <h3>Basic Information (Required)</h3>
+
+        <div className="form-group">
+          <label htmlFor="name">Full Name</label>
+          <input
+            id="name"
+            type="text"
+            value={formData.name}
+            onChange={(e) => handleInputChange('name', e.target.value)}
+            placeholder="Enter your full name"
+          />
+        </div>
+
+        <div className="form-group">
+          <label htmlFor="email">Email</label>
+          <input
+            id="email"
+            type="email"
+            value={formData.email}
+            onChange={(e) => handleInputChange('email', e.target.value)}
+            placeholder="your.email@example.com"
+            disabled
+            style={{ backgroundColor: '#f5f5f5', cursor: 'not-allowed' }}
+          />
+          <small style={{ color: '#666', fontSize: '0.85em' }}>Email cannot be changed</small>
+        </div>
 
         <div className="form-group">
           <label htmlFor="ageRange">Age Range *</label>

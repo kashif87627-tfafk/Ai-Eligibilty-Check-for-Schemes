@@ -15,6 +15,8 @@ export interface Location {
 export interface UserProfile {
   id: string;
   phoneNumber: string; // Primary identifier
+  email?: string; // User email
+  name?: string; // User name
   aadhaarHash?: string; // Hashed for privacy
   
   // Demographics
@@ -59,6 +61,8 @@ export interface CreateUserProfileInput {
   consentGiven: boolean;
   
   // Optional fields
+  email?: string;
+  name?: string;
   gender?: UserProfile['gender'];
   education?: UserProfile['education'];
   occupation?: string;
@@ -75,6 +79,8 @@ export interface UpdateUserProfileInput {
   id: string;
   
   // All fields optional for updates
+  email?: string;
+  name?: string;
   ageRange?: UserProfile['ageRange'];
   gender?: UserProfile['gender'];
   location?: Location;

@@ -52,7 +52,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         }
       } else {
         const currentUser = await getCurrentUser();
-        setUser(currentUser);
+        // Fetch user attributes to get email
+        const { fetchUserAttributes } = await import('aws-amplify/auth');
+        const attributes = await fetchUserAttributes();
+        setUser({
+          ...currentUser,
+          email: attributes.email || currentUser.username
+        });
       }
     } catch (error) {
       setUser(null);
