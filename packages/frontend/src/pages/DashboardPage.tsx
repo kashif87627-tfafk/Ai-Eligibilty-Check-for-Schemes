@@ -17,6 +17,7 @@ const DashboardPage = () => {
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [evaluationResult, setEvaluationResult] = useState<EligibilityEvaluationResponse | null>(null);
   const [activeTab, setActiveTab] = useState<'eligibility' | 'discovery'>('eligibility');
+  const [isEditingProfile, setIsEditingProfile] = useState(false);
 
   useEffect(() => {
     loadProfile();
@@ -76,6 +77,7 @@ const DashboardPage = () => {
         // Update existing profile
         await profileApi.update(profile.id, cleanedData);
         setSuccessMessage('Profile updated successfully!');
+        setIsEditingProfile(false);
       } else {
         // Create new profile
         const response = await profileApi.create(cleanedData);
@@ -122,12 +124,36 @@ const DashboardPage = () => {
               </div>
             )}
 
-            {!profile ? (
+            {!profile || isEditingProfile ? (
               <div className="profile-section">
                 <UserProfileForm
                   onSubmit={handleProfileSubmit}
                   phoneNumber={user?.username || ''}
+                  initialData={profile ? {
+                    phoneNumber: profile.phoneNumber,
+                    ageRange: profile.ageRange,
+                    gender: profile.gender,
+                    location: profile.location,
+                    education: profile.education,
+                    occupation: profile.occupation,
+                    employmentStatus: profile.employmentStatus,
+                    incomeRange: profile.incomeRange,
+                    category: profile.category,
+                    disabilityStatus: profile.disabilityStatus,
+                    language: profile.language,
+                    consentGiven: profile.consentGiven,
+                    sensitiveDataConsent: profile.sensitiveDataConsent
+                  } : undefined}
                 />
+                {profile && (
+                  <button 
+                    className="cancel-edit-button"
+                    onClick={() => setIsEditingProfile(false)}
+                    style={{ marginTop: '1rem' }}
+                  >
+                    Cancel
+                  </button>
+                )}
               </div>
             ) : (
               <div className="profile-section">
@@ -142,7 +168,7 @@ const DashboardPage = () => {
                   </div>
                   <button 
                     className="edit-profile-button"
-                    onClick={() => setProfile(null)}
+                    onClick={() => setIsEditingProfile(true)}
                   >
                     Edit Profile
                   </button>
