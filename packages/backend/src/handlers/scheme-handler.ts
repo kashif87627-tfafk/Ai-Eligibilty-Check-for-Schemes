@@ -284,9 +284,11 @@ export async function addSchemeHandler(event: APIGatewayProxyEvent): Promise<API
     // Convert to EligibilityRule format
     const rule = convertToEligibilityRule(scheme);
     
-    // Check if scheme already exists
+    // Check if scheme already exists (by name, not ID, since same scheme can have different IDs)
     const existingRules = await getAllEligibilityRules();
-    const duplicate = existingRules.find(r => r.schemeId === rule.schemeId);
+    const duplicate = existingRules.find(r => 
+      r.schemeName.toLowerCase().trim() === rule.schemeName.toLowerCase().trim()
+    );
     
     if (duplicate) {
       return createResponse(409, {
