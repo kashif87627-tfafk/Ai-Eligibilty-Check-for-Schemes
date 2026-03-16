@@ -1,4 +1,4 @@
-# DataShade - AI Eligibility Check Platform
+# DataShade - AI Eligibility Check Platform.
 
 An AI-powered platform to help users determine their eligibility for government schemes and community programs in India.
 
